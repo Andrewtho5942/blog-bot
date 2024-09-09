@@ -2,8 +2,24 @@ require('dotenv').config();
 const { Client, GatewayIntentBits  } = require('discord.js');
 const admin = require('firebase-admin');
 
+const http = require('http');
+
+// Create a simple HTTP server to satisfy Render's port requirement
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot is running');
+});
+
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions]
+    intents: [GatewayIntentBits.Guilds,
+         GatewayIntentBits.GuildMessages,
+          GatewayIntentBits.MessageContent,
+           GatewayIntentBits.GuildMessageReactions]
   });
 
 // Initialize Firebase Admin SDK

@@ -12,6 +12,7 @@
   "dependencies": {
     "discord.js": "^14.16.1",
     "dotenv": "^16.4.5",
-    "firebase-admin": "^12.4.0"
+    "firebase-admin": "^12.4.0",
+    "http": "^0.0.1-security"
   }
 }
