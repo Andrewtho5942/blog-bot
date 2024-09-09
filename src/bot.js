@@ -66,6 +66,17 @@ client.on('ready', () => {
 client.on('rateLimit', (info) => {
     console.warn('Rate limit hit:', info);
 });
+client.on('shardDisconnect', (event, shardId) => {
+    console.error(`Shard ${shardId} disconnected with reason:`, event);
+});
+
+client.on('shardReconnecting', (shardId) => {
+    console.log(`Shard ${shardId} is reconnecting...`);
+});
+
+client.on('error', (error) => {
+    console.error('WebSocket encountered an error:', error);
+});
 
 client.on('messageCreate', async (message) => {
     if (message.channel.id === blogID) {
