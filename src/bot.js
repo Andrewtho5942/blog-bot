@@ -49,34 +49,34 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
     if (message.channel.id === blogID) {
-        // if (message.attachments.size > 0) {
-        //    message.attachments.forEach(async (attachment) => {
-        // //if (attachment.contentType.includes('image')) {
-        //     const imageData = {
-        //         url: attachment.url,
-        //         caption: message.content || 'No caption',
-        //         timestamp: Date.now(),
-        //     };
 
-        //     // Add image data to Firebase
-        //     const db = admin.firestore();
-        //     await db.collection('images').add(imageData);
-        //     console.log('Image uploaded to Firebase');
-        // }
+        // process the message text into the title and caption
+        let lines = message.content.split('\n')
 
-        console.log("picked up a blog message by: " + message.author.username)
-        const messageData = {
-            caption: message.content,
-            link: message.content,
+        let title = lines[0]
+        let caption = lines.slice(1).join('\n')
+
+        let messageData = {
+            title: title || "Blog Post",
+            caption: caption || "No Caption",
+            links: [],
             timestamp: message.createdTimestamp,
-        };
+        }
+
+        // Get the image links for every attachment in the message
+        if (message.attachments.size > 0) {
+            const imagePromises = message.attachments.map(async (attachment) => {
+                messageData.links.push(attachment.url);
+            });
+
+            await Promise.all(imagePromises);
+        }
 
         // Add message data to Firebase
         const db = admin.firestore();
         await db.collection('blog').add(messageData);
-        console.log('Message uploaded to Firebase');
-        //  });
-        //}
+        console.log(message.createdTimestamp + ': Message uploaded to Firebase');
+
     }
 });
 
