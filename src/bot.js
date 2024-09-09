@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Client, GatewayIntentBits  } = require('discord.js');
 const admin = require('firebase-admin');
 
@@ -34,4 +35,4 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-//client.login('');
+client.login(process.env.DISCORD_BOT_TOKEN);
