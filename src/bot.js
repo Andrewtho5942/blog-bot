@@ -35,13 +35,15 @@ if (isLocal) {
 } else {
     // Render (cloud) environment
     console.log('render')
-    console.log(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, 'base64').toString())
     serviceAccount = JSON.parse(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, 'base64').toString());
 }
+console.log(serviceAccount)
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
+
+console.log('test')
 
 
 client.on('ready', () => {
@@ -50,6 +52,7 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
     if (message.channel.id === blogID) {
+        console.log('Found new message')
 
         // process the message text into the title and caption
         let lines = message.content.split('\n')
