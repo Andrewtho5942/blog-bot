@@ -25,20 +25,22 @@ const client = new Client({
 const isLocal = process.env.LOCAL_ENV === 'true';
 const blogID = "1282504896171741267"
 
+let serviceAccount = null
+
 if (isLocal) {
     // Local environment
-    const serviceAccount = require(path.join(__dirname, '..', 'config', 'serviceAccountKey.json'));
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
+    console.log('local')
+    let accountPath = path.join(__dirname, '..', 'config', 'serviceAccountKey.json');
+    serviceAccount = require(accountPath);
 } else {
-    // Initialize Firebase Admin SDK for render
-    const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
+    // Render (cloud) environment
+    console.log('render')
+    serviceAccount = JSON.parse(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, 'base64').toString());
 }
 
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 
 client.on('ready', () => {
