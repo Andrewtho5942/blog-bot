@@ -77,6 +77,14 @@ client.on('messageCreate', async (message) => {
         await db.collection('blog').add(messageData);
         console.log(message.createdTimestamp + ': Message uploaded to Firebase');
 
+         // React to the message after uploading it to Firebase
+         try {
+            await message.react('📄'); 
+            console.log('Reacted to the message');
+        } catch (error) {
+            console.error('Failed to react to the message:', error);
+        }
+
     }
 });
 
