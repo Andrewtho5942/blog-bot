@@ -31,13 +31,11 @@ if (isLocal) {
     const serviceAccount = require(path.join(__dirname, '..', 'config', 'serviceAccountKey.json'));
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: "https://your-firebase-project.firebaseio.com"
     });
 } else {
     // Initialize Firebase Admin SDK for render
     admin.initializeApp({
         credential: admin.credential.applicationDefault(),
-        databaseURL: "https://your-firebase-project.firebaseio.com"
     });
 }
 
