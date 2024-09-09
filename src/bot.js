@@ -78,6 +78,18 @@ client.on('error', (error) => {
     console.error('WebSocket encountered an error:', error);
 });
 
+client.ws.on('close', (code, reason) => {
+    console.error(`WebSocket closed with code ${code}: ${reason}`);
+});
+
+client.ws.on('open', () => {
+    console.log('WebSocket connection opened.');
+});
+
+client.ws.on('error', (error) => {
+    console.error('WebSocket error occurred:', error);
+});
+
 client.on('messageCreate', async (message) => {
     if (message.channel.id === blogID) {
         console.log('Found new message')
