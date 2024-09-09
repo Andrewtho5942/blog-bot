@@ -1,9 +1,9 @@
-const { Client, Intents } = require('discord.js');
+const { Client, GatewayIntentBits  } = require('discord.js');
 const admin = require('firebase-admin');
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
-});
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions]
+  });
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
