@@ -131,8 +131,10 @@ client.on('messageCreate', async (message) => {
 
     }
 });
-client.login(process.env.DISCORD_BOT_TOKEN).catch(console.error);
 
+setTimeout(() => {
+    client.login(process.env.DISCORD_BOT_TOKEN).catch(console.error);
+}, 5000);
 const dns = require('dns');
 dns.resolve('discord.com', (err) => {
     if (err) {
