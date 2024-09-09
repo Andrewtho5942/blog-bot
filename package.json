@@ -14,5 +14,8 @@
     "dotenv": "^16.4.5",
     "firebase-admin": "^12.4.0",
     "http": "^0.0.1-security"
+  },
+  "engines": {
+    "node": ">=16.6.0"
   }
 }
