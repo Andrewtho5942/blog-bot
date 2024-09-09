@@ -21,21 +21,21 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions]
 });
+
 const isLocal = process.env.LOCAL_ENV === 'true';
 const blogID = "1282504896171741267"
 
-
 if (isLocal) {
     // Local environment
-    console.log(__dirname)
     const serviceAccount = require(path.join(__dirname, '..', 'config', 'serviceAccountKey.json'));
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
     });
 } else {
     // Initialize Firebase Admin SDK for render
+    const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
     admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
+        credential: admin.credential.cert(serviceAccount),
     });
 }
 
