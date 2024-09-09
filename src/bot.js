@@ -11,10 +11,10 @@ const server = http.createServer((req, res) => {
     res.end('Bot is running');
 });
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+// const port = process.env.PORT || 3000;
+// server.listen(port, () => {
+//     console.log(`Server running on port ${port}`);
+// });
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
@@ -52,6 +52,13 @@ client.on('warn', (info) => {
     console.log(`WARN: ${info}`);
 });
 
+client.on('shardError', error => {
+    console.error('A websocket connection encountered an error:', error);
+});
+
+client.on('invalidated', () => {
+    console.error('Client invalidated. Likely due to invalid token or session.');
+});
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
