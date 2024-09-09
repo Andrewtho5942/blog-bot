@@ -11,10 +11,10 @@ const server = http.createServer((req, res) => {
     res.end('Bot is running');
 });
 
-// const port = process.env.PORT || 3000;
-// server.listen(port, () => {
-//     console.log(`Server running on port ${port}`);
-// });
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
@@ -38,7 +38,6 @@ if (isLocal) {
     console.log('render')
     serviceAccount = JSON.parse(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, 'base64').toString());
 }
-console.log(serviceAccount)
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -105,5 +104,13 @@ client.on('messageCreate', async (message) => {
 
     }
 });
-console.log(`Using bot token: ${process.env.DISCORD_BOT_TOKEN ? 'Token is set' : 'Token is missing'}`);
 client.login(process.env.DISCORD_BOT_TOKEN).catch(console.error);
+
+const dns = require('dns');
+dns.resolve('discord.com', (err) => {
+    if (err) {
+        console.error('DNS lookup failed for discord.com:', err);
+    } else {
+        console.log('DNS lookup successful');
+    }
+});
