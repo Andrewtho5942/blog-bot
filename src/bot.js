@@ -35,6 +35,7 @@ if (isLocal) {
 } else {
     // Render (cloud) environment
     console.log('render')
+    console.log(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, 'base64').toString())
     serviceAccount = JSON.parse(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, 'base64').toString());
 }
 
