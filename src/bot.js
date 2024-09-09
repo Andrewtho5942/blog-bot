@@ -63,6 +63,10 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
+client.on('rateLimit', (info) => {
+    console.warn('Rate limit hit:', info);
+});
+
 client.on('messageCreate', async (message) => {
     if (message.channel.id === blogID) {
         console.log('Found new message')
