@@ -16,6 +16,6 @@
     "http": "^0.0.1-security"
   },
   "engines": {
-    "node": ">=16.6.0"
+    "node": ">=18"
   }
 }
