@@ -3,8 +3,10 @@ const { Client, GatewayIntentBits } = require("discord.js");
 const admin = require("firebase-admin");
 const path = require("path");
 const http = require("http");
+const axios = require("axios");
+const sharp = require("sharp");
 
-// Create a simple HTTP server to satisfy Render's port requirement
+// Create a simple HTTP server to keep the bot alive
 const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("Bot is running");
@@ -35,15 +37,20 @@ let serviceAccount = JSON.parse(
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
+    storageBucket: "gs://blog-db-3e43b.appspot.com"
 });
 
-// client.on("debug", (info) => {
-//     console.log(`DEBUG: ${info}`);
-// });
+client.on('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+});
 
-// client.on("warn", (info) => {
-//     console.log(`WARN: ${info}`);
-// });
+client.on("debug", (info) => {
+    console.log(`DEBUG: ${info}`);
+});
+
+client.on("warn", (info) => {
+    console.log(`WARN: ${info}`);
+ });
 
 client.on("messageCreate", async (message) => {
     if (message.channel.id === blogID) {
@@ -62,11 +69,45 @@ client.on("messageCreate", async (message) => {
 
         // Get the image links for every attachment in the message
         if (message.attachments.size > 0) {
-            const imagePromises = message.attachments.map(
-                async (attachment) => {
-                    messageData.links.push(attachment.url);
-                },
-            );
+            //const imagePromises = message.attachments.map(
+            //    async (attachment) => {
+            //        messageData.links.push(attachment.url);
+            //    },
+            //);
+
+            // code to store the image on firebase cloud storage and save the link to firestore,
+            // rather than using a discord link that will expire
+            const imagePromises = message.attachments.map(async (attachment) => {
+                // Download the image from Discord's attachment link
+                const response = await axios({
+                    url: attachment.url,
+                    responseType: "arraybuffer", // Download as binary data
+                });
+
+                // Compress the image using sharp
+                const compressedImageBuffer = await sharp(response.data)
+                    //.resize(800) // Resize the image (adjust the size as needed)
+                    .jpeg({ quality: 80 }) // Compress the image to JPEG with 80% quality
+                    .toBuffer();
+
+                // Upload the compressed image to Firebase Storage
+                const bucket = admin.storage().bucket();
+                const fileName = `images/${Date.now()}-${attachment.name}`;
+
+                const file = bucket.file(fileName);
+                await file.save(compressedImageBuffer, {
+                    metadata: {
+                        contentType: "image/jpeg",
+                    },
+                });
+
+                // Store the Firebase image link in messageData
+                const [url] = await file.getSignedUrl({
+                    action: "read",
+                    expires: "04-20-2069",
+                });
+                messageData.links.push(url);
+            });
 
             await Promise.all(imagePromises);
         }

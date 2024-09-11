@@ -10,10 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^1.7.7",
     "discord.js": "^14.16.1",
     "dotenv": "^16.4.5",
     "firebase-admin": "^12.4.0",
-    "http": "^0.0.1-security"
+    "http": "^0.0.1-security",
+    "sharp": "^0.33.5"
   },
   "engines": {
     "node": ">=18"
