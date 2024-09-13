@@ -40,6 +40,19 @@ admin.initializeApp({
     storageBucket: "gs://blog-db-3e43b.appspot.com"
 });
 
+// simple websocket connection to test on render
+const WebSocket = require('ws');
+
+const ws = new WebSocket('wss://gateway.discord.gg');
+
+ws.on('open', () => {
+    console.log('WebSocket connection established!');
+});
+
+ws.on('error', (err) => {
+    console.error('WebSocket error:', err);
+});
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -69,12 +82,6 @@ client.on("messageCreate", async (message) => {
 
         // Get the image links for every attachment in the message
         if (message.attachments.size > 0) {
-            //const imagePromises = message.attachments.map(
-            //    async (attachment) => {
-            //        messageData.links.push(attachment.url);
-            //    },
-            //);
-
             // code to store the image on firebase cloud storage and save the link to firestore,
             // rather than using a discord link that will expire
             const imagePromises = message.attachments.map(async (attachment) => {
