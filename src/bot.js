@@ -5,6 +5,7 @@ const path = require("path");
 const http = require("http");
 const axios = require("axios");
 const sharp = require("sharp");
+const Bottleneck = require("bottleneck");
 
 // Create a simple HTTP server to keep the bot alive
 const server = http.createServer((req, res) => {
@@ -39,6 +40,12 @@ let serviceAccount = JSON.parse(
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: "gs://blog-db-3e43b.appspot.com"
+});
+
+// Use Bottleneck to control the concurrency of image processing tasks
+const limiter = new Bottleneck({
+    maxConcurrent: 2, // Limit to 2 concurrent image processing tasks
+    minTime: 500 // Minimum time (in ms) between each task
 });
 
 // simple websocket connection to test on render
@@ -97,6 +104,7 @@ client.on("messageCreate", async (message) => {
             // code to store the image on firebase cloud storage and save the link to firestore,
             // rather than using a discord link that will expire
             const imagePromises = message.attachments.map(async (attachment) => {
+                return limiter.schedule(async () => {
                 // Download the image from Discord's attachment link
                 const response = await axios({
                     url: attachment.url,
@@ -127,7 +135,7 @@ client.on("messageCreate", async (message) => {
                 });
                 messageData.links.push(url);
             });
-
+        });
             await Promise.all(imagePromises);
         }
 
