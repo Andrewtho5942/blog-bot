@@ -24,6 +24,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
     ],
+    restRequestTimeout: 60000
 });
 
 const blogID = "1282504896171741267";
@@ -52,6 +53,17 @@ ws.on('open', () => {
 ws.on('error', (err) => {
     console.error('WebSocket error:', err);
 });
+
+async function testDiscordAPI() {
+    try {
+        const response = await axios.get('https://discord.com/api/v10/gateway');
+        console.log('Discord API response:', response.data);
+    } catch (error) {
+        console.error('Error connecting to Discord API:', error);
+    }
+}
+testDiscordAPI();
+
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
