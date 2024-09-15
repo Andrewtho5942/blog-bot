@@ -61,7 +61,7 @@ ws.on('error', (err) => {
     console.error('WebSocket error:', err);
 });
 
-async function testDiscordAPI() {
+async function pingDiscord() {
     try {
         const response = await axios.get('https://discord.com/api/v10/gateway');
         console.log('Discord API response:', response.data);
@@ -69,8 +69,9 @@ async function testDiscordAPI() {
         console.error('Error connecting to Discord API:', error);
     }
 }
-testDiscordAPI();
-
+// ping Discord to keep the connection alive
+pingDiscord();
+setInterval(pingDiscord, 600000);
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
