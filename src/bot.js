@@ -71,7 +71,6 @@ async function pingDiscord() {
 }
 // ping Discord to keep the connection alive
 pingDiscord();
-setInterval(pingDiscord, 600000);
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
