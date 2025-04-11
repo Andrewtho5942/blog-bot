@@ -7,6 +7,8 @@ const axios = require("axios");
 const sharp = require("sharp");
 const Bottleneck = require("bottleneck");
 
+const blogID = "1282504896171741267";
+
 // Create a simple HTTP server to keep the bot alive
 const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });
@@ -27,8 +29,6 @@ const client = new Client({
     ],
     restRequestTimeout: 60000
 });
-
-const blogID = "1282504896171741267";
 
 let serviceAccount = JSON.parse(
     Buffer.from(
@@ -83,8 +83,10 @@ client.on("debug", (info) => {
 client.on("warn", (info) => {
     console.log(`WARN: ${info}`);
  });
+ console.log("test")
 
 client.on("messageCreate", async (message) => {
+    console.log("found message w/ id:", message.id)
     if (message.channel.id === blogID) {
         // process the message text into the title and caption
         let lines = message.content.split("\n");
@@ -97,6 +99,7 @@ client.on("messageCreate", async (message) => {
             caption: caption || "No Caption",
             links: [],
             timestamp: message.createdTimestamp,
+            messageID: message.id
         };
 
         // Get the image links for every attachment in the message
@@ -155,5 +158,29 @@ client.on("messageCreate", async (message) => {
         }
     }
 });
+
+
+// Listen for message deletions in the channel of interest
+client.on('messageDelete', async (message) => {
+    if (message.channel.id !== blogID) return;
+
+    try {
+        console.log(`Message deleted in target channel. Removing from Firestore...`);
+        const snapshot = await db.collection('blog').where('messageID', '==', message.id).get();
+
+        if (snapshot.empty) {
+            console.log('No matching document found to delete.');
+        } else {
+            for (const doc of snapshot.docs) {
+                await db.collection('blog').doc(doc.id).delete();
+                console.log(`Deleted document with ID: ${doc.id}`);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to delete Firestore document for deleted message:', error);
+    }
+});
+
+
 
 client.login(process.env.DISCORD_BOT_TOKEN).catch(console.error);
