@@ -166,6 +166,7 @@ client.on('messageDelete', async (message) => {
 
     try {
         console.log(`Message deleted in target channel. Removing from Firestore...`);
+        const db = admin.firestore();
         const snapshot = await db.collection('blog').where('messageID', '==', message.id).get();
 
         if (snapshot.empty) {
